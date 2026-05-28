@@ -1,0 +1,48 @@
+'use strict';
+
+const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  NO_CONTENT: 204,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  UNPROCESSABLE_ENTITY: 422,
+  TOO_MANY_REQUESTS: 429,
+  INTERNAL_SERVER_ERROR: 500,
+};
+
+const ROLES = {
+  USER: 'user',
+  ADMIN: 'admin',
+};
+
+const ALERT_TYPES = {
+  DOWN: 'down',
+  RECOVERED: 'recovered',
+};
+
+const MONITOR_STATUS = {
+  UP: 'up',
+  DOWN: 'down',
+  UNKNOWN: 'unknown',
+};
+
+const MONITOR_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+
+const DEFAULT_PAGINATION = {
+  PAGE: 1,
+  LIMIT: 10,
+  MAX_LIMIT: 100,
+};
+
+module.exports = {
+  HTTP_STATUS,
+  ROLES,
+  ALERT_TYPES,
+  MONITOR_STATUS,
+  MONITOR_METHODS,
+  DEFAULT_PAGINATION,
+};
