@@ -6,6 +6,7 @@ const router = express.Router();
 const authRoutes = require('./auth.routes');
 const monitorRoutes = require('./monitor.routes');
 const analyticsRoutes = require('./analytics.routes');
+const alertRoutes = require('./alert.routes');
 
 /**
  * @openapi
@@ -44,5 +45,6 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/monitors', monitorRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/alerts', alertRoutes);
 
 module.exports = router;

@@ -27,7 +27,7 @@ async function checkMonitor(monitor) {
       url: monitor.url,
       timeout: env.healthCheck.timeoutMs,
       validateStatus: () => true, // don't throw on 4xx/5xx — record them
-      headers: monitor.headers ? Object.fromEntries(monitor.headers) : {},
+      headers: monitor.headers || {},
     });
 
     statusCode = response.status;

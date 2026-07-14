@@ -54,10 +54,18 @@ async function markReadByMonitor(monitorId) {
   return Alert.updateMany({ monitorId, isRead: false }, { isRead: true });
 }
 
+/**
+ * Mark all alerts for a user as read.
+ */
+async function markAllReadByUser(userId) {
+  return Alert.updateMany({ userId, isRead: false }, { isRead: true });
+}
+
 module.exports = {
   create,
   findByMonitorId,
   findByUserId,
   countUnread,
   markReadByMonitor,
+  markAllReadByUser, // ← naya
 };
