@@ -1,122 +1,230 @@
 # InfraGuard Lite
 
-> Production-style API monitoring & analytics backend — built to demonstrate clean architecture, scalable backend patterns, and deployment-ready engineering.
+InfraGuard Lite is a full-stack monitoring dashboard for APIs and services. It includes a Node.js/Express backend with JWT auth, monitoring jobs, alerting, analytics, and a React/Vite frontend UI.
 
----
+## 🚀 What this project does
 
-## Tech Stack
+- Monitor API endpoints and service health
+- Track uptime, response time, and failure counts
+- Generate alerts after configurable failure thresholds
+- Display analytics and monitor details in a React dashboard
+- Secure user accounts with JWT access and refresh tokens
+- Provide API docs via Swagger UI
 
-| Layer | Technology |
-|-------|------------|
-| Runtime | Node.js + Express.js |
-| Database | MongoDB Atlas (Mongoose) |
-| Auth | JWT (access + refresh tokens with DB rotation) |
-| Validation | Zod |
-| Security | Helmet, CORS, express-rate-limit |
-| Logging | Winston (file rotation + colorized console) |
-| Scheduling | node-cron |
-| Docs | Swagger UI (`/api-docs`) |
-| Testing | Jest + Supertest + mongodb-memory-server |
-| Deployment | Render |
+## 🧩 Tech Stack
 
----
+- Backend: Node.js, Express, MongoDB, Mongoose
+- Frontend: React, Vite, Tailwind CSS, React Router
+- Auth: JWT access + refresh tokens
+- Validation: Zod
+- Scheduling: node-cron health checks
+- Logging: Winston
+- API docs: Swagger UI
+- Testing: Jest, Supertest, mongodb-memory-server
 
-## Architecture
-
-```
-Client Request
-      │
-      ▼
-  Express App (app.js)
-      │
-      ├── Middleware: Helmet, CORS, JSON parser
-      ├── Middleware: Request Logger (UUID tracing)
-      ├── Middleware: Rate Limiter
-      │
-      ├── /api/v1/auth      → Auth Routes → Auth Controller → Auth Service
-      ├── /api/v1/monitors  → Monitor Routes → Monitor Controller → Monitor Service
-      ├── /api/v1/analytics → Analytics Routes → Analytics Controller → Analytics Service
-      │
-      ├── Middleware: 404 handler
-      └── Middleware: Centralized Error Handler
-            │
-            ▼
-      MongoDB Atlas (via Repositories)
-            │
-            ├── User, Monitor, MonitoringResult, Alert collections
-            │
-      Background: node-cron Health Check Job (every 5 min)
-            └── Checks all active monitors → saves results → triggers alerts
-```
-
----
-
-## Folder Structure
+## 📁 Repository Structure
 
 ```
-src/
-├── config/           # DB, logger, env validation, Swagger
-├── controllers/      # Thin route handlers
-├── jobs/             # Cron jobs (health check)
-├── middleware/        # Auth, error, logging, rate limiting
-├── models/           # Mongoose schemas
-├── repositories/     # DB access layer
-├── routes/           # Express routers with Swagger JSDoc
-├── services/         # Business logic
-├── tests/            # Unit + integration tests
-│   ├── unit/
-│   └── integration/
-├── utils/            # asyncHandler, response, constants, validate
-├── app.js            # Express app factory
-└── server.js         # Entry point
+backend/
+  ├── src/
+  │   ├── config/        # DB, env validation, logger, Swagger
+  │   ├── controllers/   # Request handlers
+  │   ├── jobs/          # Health check cron job
+  │   ├── middleware/    # Auth, error handling, logging, rate limiting
+  │   ├── models/        # Mongoose schemas
+  │   ├── repositories/  # Database access layer
+  │   ├── routes/        # API routers
+  │   ├── services/      # Business logic
+  │   ├── tests/         # Unit + integration tests
+  │   └── utils/         # Response helpers, validation helpers
+  │   ├── app.js         # Express app factory
+  │   └── server.js      # Entry point
+  └── package.json
+
+frontend/
+  ├── public/
+  ├── src/
+  │   ├── api/           # Axios client and API functions
+  │   ├── components/    # UI components
+  │   ├── context/       # Auth and theme providers
+  │   ├── layouts/       # App layout components
+  │   ├── pages/         # Route pages
+  │   ├── routes/        # React Router implementation
+  │   ├── validators/    # Form validation schemas
+  │   ├── App.jsx
+  │   └── main.jsx
+  └── package.json
+
+README.md
 ```
 
----
+## 🛠️ Local Setup
 
-## Getting Started
+### Backend
 
-### 1. Clone and install
+1. Open terminal and install dependencies:
 
 ```bash
-git clone <repo-url>
-cd infraguard-lite
+cd backend
 npm install
 ```
 
-### 2. Configure environment
+2. Create environment file and configure secrets:
 
 ```bash
 cp .env.example .env
-# Edit .env with your MongoDB Atlas URI and JWT secrets
 ```
 
-### 3. Run in development
+Required backend variables:
+
+- `MONGO_URI`
+- `JWT_SECRET`
+- `JWT_REFRESH_SECRET`
+- Optional: `PORT`, `NODE_ENV`, `JWT_ACCESS_EXPIRES_IN`, `JWT_REFRESH_EXPIRES_IN`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`, `HEALTH_CHECK_TIMEOUT_MS`, `CONSECUTIVE_FAILURES_THRESHOLD`
+
+3. Start backend server:
 
 ```bash
 npm run dev
 ```
 
-Server starts at `http://localhost:3000`
+The backend runs at `http://localhost:3000` and Swagger docs are available at `http://localhost:3000/api-docs`.
 
-### 4. View API docs
+### Frontend
 
-Open `http://localhost:3000/api-docs` in your browser.
-
-### 5. Run tests
+1. Open a separate terminal and install dependencies:
 
 ```bash
-npm test                # All tests
-npm run test:coverage   # With coverage report
+cd infraguard-frontend
+npm install
 ```
+
+2. Configure the frontend API base URL in a `.env` file:
+
+```bash
+VITE_API_URL=http://localhost:3000/api/v1
+```
+
+3. Start frontend development server:
+
+```bash
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173` by default.
+
+## 🧪 Testing
+
+Backend tests are included in `backend/src/tests`.
+
+```bash
+cd backend
+npm test
+```
+
+Run coverage:
+
+```bash
+npm run test:coverage
+```
+
+## 🔌 API Overview
+
+Base URL:
+
+```bash
+http://localhost:3000/api/v1
+```
+
+### Auth
+
+- `POST /auth/register` — Register a new user
+- `POST /auth/login` — Login and receive access/refresh tokens
+- `POST /auth/refresh` — Refresh access token
+- `POST /auth/logout` — Logout and invalidate refresh token
+- `GET /auth/me` — Get current user profile
+
+### Monitors
+
+- `POST /monitors` — Create a new monitor
+- `GET /monitors` — List monitors
+- `GET /monitors/:id` — Get monitor details
+- `PUT /monitors/:id` — Update monitor
+- `DELETE /monitors/:id` — Delete monitor
+- `PATCH /monitors/:id/toggle` — Pause or resume monitor
+
+### Analytics
+
+- `GET /analytics` — Global dashboard metrics
+- `GET /analytics/:monitorId` — Monitor-specific analytics
+
+### System
+
+- `GET /health` — API health check
+
+## 📦 Response Format
+
+Success example:
+
+```json
+{
+  "success": true,
+  "message": "Monitor created",
+  "data": { }
+}
+```
+
+Error example:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
+    { "field": "email", "message": "Invalid email address" }
+  ]
+}
+```
+
+## ⚙️ Environment Variables
+
+### Backend (`backend/.env`)
+
+- `PORT` — Server port (default `3000`)
+- `NODE_ENV` — Environment mode (default `development`)
+- `MONGO_URI` — MongoDB connection string
+- `JWT_SECRET` — Access token secret
+- `JWT_REFRESH_SECRET` — Refresh token secret
+- `JWT_ACCESS_EXPIRES_IN` — Access token expiry (default `15m`)
+- `JWT_REFRESH_EXPIRES_IN` — Refresh token expiry (default `7d`)
+- `RATE_LIMIT_WINDOW_MS` — Rate limit window in ms (default `900000`)
+- `RATE_LIMIT_MAX` — Max requests per window (default `100`)
+- `HEALTH_CHECK_TIMEOUT_MS` — Health check timeout ms (default `10000`)
+- `CONSECUTIVE_FAILURES_THRESHOLD` — Failures before alert triggers (default `3`)
+
+### Frontend (`infraguard-frontend/.env`)
+
+- `VITE_API_URL` — Backend API URL, e.g. `http://localhost:3000/api/v1`
+
+## ✅ Features
+
+- JWT-based authentication with refresh token rotation
+- Active monitor tracking with health check scheduler
+- Alerts for failing monitors after repeated errors
+- Analytics dashboards for response times and uptime
+- React UI with protected routes and form validation
+- Swagger API documentation
+- Graceful shutdown and centralized error handling
+
+## 📌 Notes
+
+- Run backend and frontend in separate terminals.
+- Ensure your MongoDB URI is accessible from your local machine.
+- For production, use secure secrets and HTTPS.
 
 ---
 
-## API Reference
-
-### Base URL
-```
-http://localhost:3000/api/v1
-```
+Happy deploying your InfraGuard Lite project!
 
 ### Authentication
 
