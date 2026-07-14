@@ -1,4 +1,4 @@
- 'use strict';
+'use strict';
 
 const express = require('express');
 const helmet = require('helmet');
@@ -13,26 +13,38 @@ const { globalLimiter } = require('./middleware/rateLimiter.middleware');
 
 const app = express();
 
-// ─── Security Middleware ───────────────────────────────────────────────────────
-app.use(helmet());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
-//app.use(
-  //cors({
-    //origin: process.env.CORS_ORIGIN || '*',
-    //methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    //allowedHeaders: ['Content-Type', 'Authorization'],
-  //})
-//);
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : [];
 
-// ─── Request Parsing ──────────────────────────────────────────────────────────
+app.use(helmet());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow Postman / server-to-server requests
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false }));
 
-// ─── Logging & Rate Limiting ──────────────────────────────────────────────────
 app.use(requestLogger);
 app.use(globalLimiter);
 
-// ─── API Documentation ────────────────────────────────────────────────────────
 app.use(
   '/api-docs',
   swaggerUi.serve,
@@ -45,16 +57,13 @@ app.use(
   })
 );
 
-// Expose raw OpenAPI JSON spec
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
 
-// ─── API Routes ───────────────────────────────────────────────────────────────
 app.use('/api/v1', v1Routes);
 
-// ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -62,8 +71,6 @@ app.use((req, res) => {
   });
 });
 
-// ─── Global Error Handler ─────────────────────────────────────────────────────
-// Must be last — Express identifies error middleware by the 4-argument signature
 app.use(errorMiddleware);
 
 module.exports = app;
