@@ -20,7 +20,11 @@ function Navbar({ onMenuClick }) {
   return (
     <header className="h-14 flex items-center justify-between px-4 md:px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       <div className="flex items-center gap-3">
-        <button onClick={onMenuClick} className="md:hidden text-xl">
+        <button
+          onClick={onMenuClick}
+          className="md:hidden text-xl"
+          aria-label="Open navigation menu"
+        >
           ☰
         </button>
         <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -45,6 +49,7 @@ function Navbar({ onMenuClick }) {
             onClick={toggleTheme}
             className="text-sm px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Toggle theme"
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {isDark ? "☀️" : "🌙"}
           </button>

@@ -20,13 +20,13 @@ function Alerts() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-6">Alerts</h2>
+      <h2 className="text-xl font-bold mb-6 dark:text-gray-100">Alerts</h2>
 
-      {isLoading && <p className="text-gray-500">Loading alerts...</p>}
+      {isLoading && <p className="text-gray-500 dark:text-gray-400">Loading alerts...</p>}
       {isError && <p className="text-red-600">Failed to load alerts.</p>}
 
       {data && data.alerts.length === 0 && (
-        <p className="text-gray-500 text-center py-16">
+        <p className="text-gray-500 dark:text-gray-400 text-center py-16">
           No alerts yet. You'll see updates here when a monitor goes down or
           recovers.
         </p>
@@ -34,7 +34,7 @@ function Alerts() {
 
       {data && data.alerts.length > 0 && (
         <>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
             {data.alerts.map((alert) => (
               <div key={alert._id} className="flex items-start gap-3 px-4 py-3">
                 <span
@@ -43,21 +43,21 @@ function Alerts() {
                   }`}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-gray-800">{alert.message}</p>
+                  <p className="text-sm text-gray-800 dark:text-gray-100">{alert.message}</p>
                   {alert.monitorId?.name && (
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       Monitor: {alert.monitorId.name}
                     </p>
                   )}
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                     {new Date(alert.createdAt).toLocaleString()}
                   </p>
                 </div>
                 <span
                   className={`text-xs px-2 py-1 rounded-full shrink-0 ${
                     alert.type === "down"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-green-100 text-green-700"
+                      ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                      : "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
                   }`}
                 >
                   {alert.type}
@@ -70,11 +70,11 @@ function Alerts() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1 text-sm border rounded-md disabled:opacity-40"
+              className="px-3 py-1 text-sm border rounded-md disabled:opacity-40 dark:border-gray-600 dark:text-gray-200"
             >
               Previous
             </button>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               Page {data.pagination.page} of {data.pagination.totalPages}
             </span>
             <button
@@ -82,7 +82,7 @@ function Alerts() {
                 setPage((p) => Math.min(data.pagination.totalPages, p + 1))
               }
               disabled={page === data.pagination.totalPages}
-              className="px-3 py-1 text-sm border rounded-md disabled:opacity-40"
+              className="px-3 py-1 text-sm border rounded-md disabled:opacity-40 dark:border-gray-600 dark:text-gray-200"
             >
               Next
             </button>

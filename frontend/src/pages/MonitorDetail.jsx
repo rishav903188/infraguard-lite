@@ -16,7 +16,7 @@ function MonitorDetail() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["monitor-analytics", id],
     queryFn: () => fetchMonitorAnalytics(id),
-    refetchInterval: 30000, 
+    refetchInterval: 30000,
   });
 
   const previousStatus = useRef(null);
@@ -38,7 +38,7 @@ function MonitorDetail() {
   }, [data?.monitor?.lastStatus, data?.monitor?.name]);
 
   if (isLoading) {
-    return <p className="text-gray-500">Loading analytics...</p>;
+    return <p className="text-gray-500 dark:text-gray-400">Loading analytics...</p>;
   }
 
   if (isError || !data) {
@@ -47,7 +47,7 @@ function MonitorDetail() {
         <p className="text-red-600 mb-4">Failed to load monitor analytics.</p>
         <button
           onClick={() => navigate("/monitors")}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
           ← Back to Monitors
         </button>
@@ -61,16 +61,16 @@ function MonitorDetail() {
     <div>
       <button
         onClick={() => navigate("/monitors")}
-        className="text-sm text-gray-500 hover:underline mb-4"
+        className="text-sm text-gray-500 dark:text-gray-400 hover:underline mb-4"
       >
         ← Back to Monitors
       </button>
 
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h2 className="text-xl font-bold">{monitor.name}</h2>
-          <p className="text-sm text-gray-500">{monitor.url}</p>
-          <p className="text-xs text-gray-400 mt-1">
+          <h2 className="text-xl font-bold dark:text-gray-100">{monitor.name}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{monitor.url}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
             {monitor.method} · every {monitor.interval} min
           </p>
         </div>
@@ -84,10 +84,10 @@ function MonitorDetail() {
           suffix="%"
           color={
             stats.uptimePercentage >= 99
-              ? "text-green-600"
+              ? "text-green-600 dark:text-green-400"
               : stats.uptimePercentage >= 95
-              ? "text-yellow-600"
-              : "text-red-600"
+              ? "text-yellow-600 dark:text-yellow-400"
+              : "text-red-600 dark:text-red-400"
           }
         />
         <StatCard label="Total Checks" value={stats.totalChecks} />
@@ -99,22 +99,22 @@ function MonitorDetail() {
         />
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           Response Time (recent checks)
         </h3>
         <ResponseTimeChart results={recentResults} />
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           Status Timeline
         </h3>
         <StatusTimeline results={recentResults} />
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           Recent Alerts
         </h3>
         <RecentAlertsList alerts={recentAlerts} />
